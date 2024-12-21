@@ -4,6 +4,7 @@ import About from "../pages/About/About";
 import MainLayout from "../layout.tsx/MainLayout";
 import Login from "../pages/Login/Login";
 import PrivetRoute from "./PrivetRoute";
+import Signup from "../pages/Signup/Signup";
 
 const Routers = () => {
   return (
@@ -27,6 +28,7 @@ const Routers = () => {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
   );
