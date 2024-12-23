@@ -1,31 +1,61 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { onAuthStateChanged } from "firebase/auth";
-import { ReactNode, useEffect, useState } from "react";
-import { auth } from "../lib/Firebase/firebase";
-import { Navigate } from "react-router-dom";
+import { ReactNode } from "react";
 
-const PrivetRoute = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+import { JwtPayload } from "jwt-decode";
+import { Navigate, useLocation } from "react-router-dom";
+import { userLogout } from "../redux/features/authSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { decodeToken } from "../lib/utils/decodeToken";
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
+const PrivetRoute = ({
+  role,
+  children,
+}: {
+  role: string[];
+  children: ReactNode;
+}) => {
+  const location = useLocation();
+  console.log(location.pathname);
+  let user;
+  const dispatch = useAppDispatch();
+  const { token } = useAppSelector((state) => state.auth);
 
-    return () => unsubscribe();
-  }, []);
+  if (!token) {
+    dispatch(userLogout());
+    return <Navigate replace={true} to={"/login"}></Navigate>;
+  }
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (token) {
+    user = decodeToken(token) as JwtPayload & {
+      role: string;
+      userEmail: string;
+    };
   }
 
   if (!user) {
-    return <Navigate to="/login" />;
+    dispatch(userLogout());
+    return <Navigate replace={true} to={"/login"}></Navigate>;
   }
 
-  return <>{children}</>;
+  if (!role.includes(user?.role)) {
+    dispatch(userLogout());
+    return <Navigate replace={true} to={"/login"}></Navigate>;
+  }
+
+  if (!role.includes(user?.role)) {
+    dispatch(userLogout());
+    return <Navigate replace={true} to={"/login"}></Navigate>;
+  }
+
+  if (
+    role.includes(user?.role) &&
+    user?.role !== "superAdmin" &&
+    (location.pathname.includes("manage-admin") ||
+      location.pathname.includes("add-admin"))
+  ) {
+    return <Navigate replace={true} to="/user-login" />;
+  }
+
+  return <div>{children}</div>;
 };
 
 export default PrivetRoute;

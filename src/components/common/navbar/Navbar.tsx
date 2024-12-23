@@ -1,29 +1,46 @@
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { userLogout } from "../../../redux/features/authSlice";
+import { useAppSelector } from "../../../redux/hooks";
+
 const Navbar = () => {
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
   const navlinks = (
     <>
       <li>
-        <a>Item 1</a>
+        <Link to={"/products"}>Mobiles</Link>
       </li>
-      <li>
+      {/* <li>
         <details>
-          <summary>Parent</summary>
+          <summary>Category</summary>
           <ul className="p-2">
             <li>
-              <a>Submenu 1</a>
+              <a>Smart Phone</a>
             </li>
             <li>
-              <a>Submenu 2</a>
+              <a>Button Phone</a>
             </li>
           </ul>
         </details>
+      </li> */}
+      <li>
+        <Link to="/about">About</Link>
       </li>
       <li>
-        <a>Item 3</a>
+        <Link to="/contact">Contact Us</Link>
+      </li>
+      <li>
+        <Link
+          to={`/${user?.role == "superAdmin" ? "admin" : user?.role}/dashboard`}
+        >
+          Dashboard
+        </Link>
       </li>
     </>
   );
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar max-h-[50px] text-white bg-gray-950">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -49,13 +66,26 @@ const Navbar = () => {
             {navlinks}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">Mobile Dokan</a>
+        <Link to={"/"} className="btn btn-ghost text-xl">
+          Mobile Dokan
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{navlinks}</ul>
       </div>
-      <div className="navbar-end">
-        <a className="btn">Button</a>
+      <div className="flex items-center w-full justify-end space-x-2 pr-4">
+        <Link to={"/cart"} className="btn btn-sm btn-ghost">
+          Cart
+        </Link>
+        {user && user.userEmail ? (
+          <button className="btn btn-sm" onClick={() => dispatch(userLogout())}>
+            Logout
+          </button>
+        ) : (
+          <Link to={"/login"} className="btn btn-sm">
+            Login
+          </Link>
+        )}
       </div>
     </div>
   );

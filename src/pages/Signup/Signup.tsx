@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/pages/RegistrationPage.tsx
 import React from "react";
 // import { useNavigate } from "react-router-dom"; // useNavigate hook for navigation
@@ -7,25 +8,32 @@ import { FormWrapper } from "../../components/common/Form/FormWrapper";
 import InputField from "../../components/common/Form/InputField";
 import SelectField from "../../components/common/Form/SelectField";
 import SubmitButton from "../../components/common/Form/SubmitButton";
+import { Link, useNavigate } from "react-router-dom";
+import { useCreateUserMutation } from "../../redux/api/authApi/authApi";
+import { IApiResponse } from "../../interface/apiResponse.interface";
+import { toast } from "sonner";
 
 const userRole = ["customer", "seller"]; // Define user roles
 
 const Signup: React.FC = () => {
-  //   const navigate = useNavigate(); // Use navigate for redirect
+  const [createUser] = useCreateUserMutation();
+  const navigate = useNavigate();
 
   const defaultValues: ICreateUser = {
     email: "",
     name: "",
     address: "",
-    role: "customer", // Default to "user"
+    role: "customer",
     mobile: 0,
     password: "",
   };
 
   const onSubmit = async (data: ICreateUser) => {
-    console.log("User Registration Data:", data);
-    // Redirect after successful registration
-    // navigate("/login");
+    const response = (await createUser(data)) as IApiResponse<any>;
+    if (response?.data?.success) {
+      toast.success(response.data.message);
+      navigate("/login");
+    }
   };
 
   return (
@@ -100,6 +108,14 @@ const Signup: React.FC = () => {
           <SubmitButton label="Signup"></SubmitButton>
         </div>
       </FormWrapper>
+      <div className="mt-4 text-center">
+        <p className="text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

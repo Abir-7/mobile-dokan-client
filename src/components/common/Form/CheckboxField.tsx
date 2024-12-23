@@ -1,20 +1,16 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-interface InputFieldProps {
+interface CheckboxFieldProps {
   name: string; // Field name
-  label: string; // Label for the field
-  type?: "text" | "email" | "number" | "password" | "date"; // Input types
-  placeholder?: string; // Placeholder text
+  label: string; // Label for the checkbox
   className?: string; // Optional styling class
   validation?: object; // Validation rules for react-hook-form
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+const CheckboxField: React.FC<CheckboxFieldProps> = ({
   name,
   label,
-  type = "text",
-  placeholder = "",
   className = "",
   validation = {},
 }) => {
@@ -24,17 +20,17 @@ const InputField: React.FC<InputFieldProps> = ({
   } = useFormContext();
 
   return (
-    <div className="mb-4">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+    <div className="mb-4 flex items-center">
+      <input
+        defaultChecked={true}
+        id={name}
+        type="checkbox"
+        {...register(name, validation)}
+        className={`checkbox ${className}`}
+      />
+      <label htmlFor={name} className="ml-2 text-sm font-medium text-gray-700">
         {label}
       </label>
-      <input
-        id={name}
-        type={type}
-        placeholder={placeholder}
-        {...register(name, validation)}
-        className={`input input-bordered w-full mt-1 ${className}`}
-      />
       {errors[name] && (
         <p className="mt-1 text-sm text-red-600">
           {errors[name]?.message as string}
@@ -44,4 +40,4 @@ const InputField: React.FC<InputFieldProps> = ({
   );
 };
 
-export default InputField;
+export default CheckboxField;

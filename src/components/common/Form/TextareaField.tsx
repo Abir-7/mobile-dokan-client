@@ -1,19 +1,17 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-interface InputFieldProps {
+interface TextareaFieldProps {
   name: string; // Field name
   label: string; // Label for the field
-  type?: "text" | "email" | "number" | "password" | "date"; // Input types
   placeholder?: string; // Placeholder text
   className?: string; // Optional styling class
   validation?: object; // Validation rules for react-hook-form
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+const TextareaField: React.FC<TextareaFieldProps> = ({
   name,
   label,
-  type = "text",
   placeholder = "",
   className = "",
   validation = {},
@@ -28,12 +26,11 @@ const InputField: React.FC<InputFieldProps> = ({
       <label htmlFor={name} className="block text-sm font-medium text-gray-700">
         {label}
       </label>
-      <input
+      <textarea
         id={name}
-        type={type}
         placeholder={placeholder}
         {...register(name, validation)}
-        className={`input input-bordered w-full mt-1 ${className}`}
+        className={`textarea textarea-bordered w-full mt-1 ${className}`}
       />
       {errors[name] && (
         <p className="mt-1 text-sm text-red-600">
@@ -44,4 +41,4 @@ const InputField: React.FC<InputFieldProps> = ({
   );
 };
 
-export default InputField;
+export default TextareaField;
